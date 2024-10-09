@@ -98,7 +98,7 @@ export default function AITextInterpolation() {
       onChange={(e) => setInputText(e.target.value)}
       onKeyDown={handleKeyDown}
       placeholder="文章を入力してください..."
-      style={{ width: '100%', height: '300px' }}
+      style={{ width: '100%', height: '200px' }}
       />
       {loading && <div>Loading prediction...</div>}
       {!loading && predictedText && (
