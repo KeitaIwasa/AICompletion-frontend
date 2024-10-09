@@ -6,7 +6,7 @@ function App() {
   // APIからデータを取得する関数
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/'); // バックエンドのAPIエンドポイント
+      const response = await axios.get('https://aicomletion.de.r.appspot.com/api/predict'); // バックエンドのAPIエンドポイント
       console.log(response.data); // 取得したデータをコンソールに表示
     } catch (error) {
       console.error("Error fetching data:", error);
