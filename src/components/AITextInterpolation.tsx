@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from "./ui/button";
 import { Textarea } from './ui/textarea';
 import { RefreshCw, Copy, Check } from "lucide-react"
@@ -20,6 +20,8 @@ export default function AITextInterpolation() {
   const [predictedText, setPredictedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false); // コピー状態を管理
+  // テキストエリアにフォーカスを戻すためのrefを作成
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // タイピング停止後0.5秒で予測を行う
   useEffect(() => {
@@ -48,6 +50,11 @@ export default function AITextInterpolation() {
   const applyPrediction = useCallback(() => {
     setInputText((prevInputText) => prevInputText + predictedText);
     setPredictedText('');
+    
+    // 補完適用後にテキストエリアにフォーカスを戻す
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   }, [predictedText]);
 
   // リトライ機能
@@ -86,6 +93,7 @@ export default function AITextInterpolation() {
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">AI 文章補間</h1>
       <Textarea
+      ref={textareaRef}
       value={inputText}
       onChange={(e) => setInputText(e.target.value)}
       onKeyDown={handleKeyDown}
