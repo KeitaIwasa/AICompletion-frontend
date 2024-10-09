@@ -7,7 +7,7 @@ import axios from 'axios';  // axiosをインポート
 // AI予測のバックエンド呼び出し関数
 const getAIPrediction = async (text: string): Promise<string> => {
   try {
-    const response = await axios.post('http://localhost:5000/api/predict', { text });  // バックエンドのエンドポイントにリクエスト
+    const response = await axios.post('https://aicomletion.de.r.appspot.com/api/predict', { text });  // バックエンドのエンドポイントにリクエスト
     return response.data.prediction;
   } catch (error) {
     console.error('Error with AI prediction:', error);
