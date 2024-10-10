@@ -21,7 +21,7 @@ export default function AITextInterpolation() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false); // コピー状態を管理
   // テキストエリアにフォーカスを戻すためのrefを作成
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLDivElement>(null);
 
   // タイピング停止後0.5秒で予測を行う
   useEffect(() => {
@@ -48,14 +48,15 @@ export default function AITextInterpolation() {
 
   // 予測結果を適用する
   const applyPrediction = useCallback(() => {
-    setInputText((prevInputText) => prevInputText + predictedText);
-    setPredictedText('');
-    
-    // 補完適用後にテキストエリアにフォーカスを戻す
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [predictedText]);
+  setInputText((prevInputText) => prevInputText + predictedText);
+  setPredictedText('');
+
+  // 補完適用後にテキストエリアの内容を更新
+  if (textareaRef.current) {
+    textareaRef.current.textContent = inputText + predictedText;
+    textareaRef.current.focus();
+  }
+}, [predictedText, inputText]);
 
   // リトライ機能
   const retryPrediction = useCallback(async () => {
@@ -77,7 +78,7 @@ export default function AITextInterpolation() {
   }, [inputText]);
 
   // キーボードショートカットの処理
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Tab') {
       // 予測を適用
       applyPrediction();
@@ -89,31 +90,34 @@ export default function AITextInterpolation() {
     }
   };
 
+  const textareaStyle = {
+    width: '100%',
+    height: '200px',
+    border: '1px solid #ccc',
+    padding: '10px',
+    overflow: 'auto',
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word' as 'break-word',
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">AI 文章補間</h1>
-      <Textarea
-      ref={textareaRef}
-      value={inputText}
-      onChange={(e) => setInputText(e.target.value)}
-      onKeyDown={handleKeyDown}
-      placeholder="文章を入力してください..."
-      style={{ width: '100%', height: '200px' }}
-      />
-      {loading && <div>Loading prediction...</div>}
-      {!loading && predictedText && (
       <div
-        onClick={applyPrediction}
-        style={{
-        backgroundColor: '#f0f0f0',
-        color: '#808080',
-        cursor: 'pointer',
-        padding: '5px',
-        }}
+        contentEditable
+        ref={textareaRef}
+        onInput={(e) => setInputText(e.currentTarget.textContent || '')}
+        onKeyDown={handleKeyDown}
+        style={textareaStyle}
       >
-        {predictedText}
+        <span>{inputText}</span>
+        <span
+          style={{ color: 'gray' }} // 文字色を灰色に設定
+          onClick={applyPrediction}
+        >
+          {predictedText}
+        </span>
       </div>
-      )}
       <div className="flex justify-end items-center mt-4 space-x-2">
         {/* コピー機能を追加 */}
         <Button
