@@ -105,10 +105,11 @@ export default function AITextInterpolation() {
       <div
         onClick={applyPrediction}
         style={{
-        backgroundColor: '#f0f0f0',
-        color: '#808080',
+        backgroundColor: '#F0F0F0',
+        color: '#273747',
         cursor: 'pointer',
         padding: '5px',
+        borderRadius: '8px',
         }}
       >
         {predictedText}
