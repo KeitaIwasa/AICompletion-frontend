@@ -44,7 +44,7 @@ export default function AITextInterpolation() {
       };
 
       fetchPrediction();
-    }, 300);
+    }, 400);
 
     return () => {
       clearTimeout(handler);
@@ -172,7 +172,7 @@ export default function AITextInterpolation() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">AI 文章補間</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">AI 文章補完</h1>
       <div style={{ position: 'relative' }}>
         <Textarea
           ref={textareaRef}
@@ -182,7 +182,7 @@ export default function AITextInterpolation() {
           placeholder="文章を入力してください..."
           style={{ 
             width: '100%', 
-            height: '200px', 
+            height: '220px', 
             resize: 'vertical',
             paddingBottom: '4.5rem',
             scrollbarGutter: 'stable', // スクロールバーの位置を自動調整            
@@ -235,9 +235,10 @@ export default function AITextInterpolation() {
             {!loading && predictedText && (
               <span
                 style={{
-                  color: '#888',
+                  color: '#484848',
                   pointerEvents: 'auto',  // クリックイベントを許可
-                  background: 'linear-gradient(#D5EEFA, #D5EEFA) no-repeat',
+                  background: '#E8E8E8',
+                  borderRadius: '4px',
                 }}
                 onClick={applyPrediction}
               >
