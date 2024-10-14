@@ -24,22 +24,30 @@ export default function AITextInterpolation() {
   const [textareaWidth, setTextareaWidth] = useState(0); // textareaの幅を管理
   const [scrollbarWidth, setScrollbarWidth] = useState(0); // スクロールバーの横幅を管理
   const [textareaHeight, setTextareaHeight] = useState(0); // textareaの高さを管理
+  const requestIdRef = useRef(0);
+
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // タイピング停止後0.4秒で予測を行う
   useEffect(() => {
+    requestIdRef.current += 1;
+    const currentRequestId = requestIdRef.current;
     const handler = setTimeout(() => {
       const fetchPrediction = async () => {
         if (inputText.length > 3) {
           setLoading(true);
           const textToSend = inputText.length <= 200 ? inputText : inputText.slice(-200);
-          const prediction = await getAIPrediction(textToSend);
-          setPredictedText(prediction);
-          setLoading(false);
+          const response = await axios.post('https://aicomletion.de.r.appspot.com/api/predict', { text: textToSend });
+          const prediction = response.data.prediction;
+          if (currentRequestId === requestIdRef.current) {
+            setPredictedText(prediction);
+            setLoading(false);
+          }
         } else {
           setPredictedText('');
+          setLoading(false);
         }
       };
 
@@ -170,6 +178,7 @@ export default function AITextInterpolation() {
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(e.target.value);
     setPredictedText(''); // 入力時に予測テキストをクリア
+    setLoading(false);    // ローディング状態をリセット
   };
 
   return (
