@@ -4,6 +4,7 @@ import { Textarea } from './ui/textarea';
 import { RefreshCw, Copy, Check } from "lucide-react"
 import { LoaderCircle } from 'lucide-react';
 import axios from 'axios';  // axiosをインポート
+import './css/animation.css';
 
 // AI予測のバックエンド呼び出し関数
 const getAIPrediction = async (text: string): Promise<string> => {
@@ -21,6 +22,7 @@ export default function AITextInterpolation() {
   const [predictedText, setPredictedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false); // コピー状態を管理
+  const [isRetrying, setIsRetrying] = useState(false); // リトライ中の状態管理
   const [textareaWidth, setTextareaWidth] = useState(0); // textareaの幅を管理
   const [scrollbarWidth, setScrollbarWidth] = useState(0); // スクロールバーの横幅を管理
   const [textareaHeight, setTextareaHeight] = useState(0); // textareaの高さを管理
@@ -38,7 +40,7 @@ export default function AITextInterpolation() {
       const fetchPrediction = async () => {
         if (inputText.length > 3) {
           setLoading(true);
-          const textToSend = inputText.length <= 200 ? inputText : inputText.slice(-200);
+          const textToSend = inputText.length <= 300 ? inputText : inputText.slice(-300);
           const response = await axios.post('https://aicomletion.de.r.appspot.com/api/predict', { text: textToSend });
           const prediction = response.data.prediction;
           if (currentRequestId === requestIdRef.current) {
@@ -137,11 +139,23 @@ export default function AITextInterpolation() {
   // リトライ機能
   const retryPrediction = useCallback(async () => {
     if (inputText.length > 5) {
+      requestIdRef.current += 1;  // 新しいリクエストIDを生成
+      const currentRequestId = requestIdRef.current;
+
       setLoading(true);
+      setIsRetrying(true); // リトライ開始
       const textToSend = inputText;
       const prediction = await getAIPrediction(textToSend);
-      setPredictedText(prediction);
-      setLoading(false);
+      // リクエストIDが現在のIDと一致する場合のみ、予測結果を更新
+      if (currentRequestId === requestIdRef.current) {
+        setPredictedText(prediction);
+        setLoading(false);
+      }
+      
+      // 1秒後にリトライアニメーションを終了
+      setTimeout(() => {
+        setIsRetrying(false); // リトライアニメーションを終了
+      }, 500);
     }
   }, [inputText]);
 
@@ -272,10 +286,11 @@ export default function AITextInterpolation() {
         {/* リトライボタン */}
         <Button
           onClick={retryPrediction}
+          onTouchStart={() => setIsRetrying(false)}// タッチスタート時にホバーを解除
           className="p-2 bg-gray-400 text-gray-600 rounded hover:bg-gray-500 transition"
           title="リトライ"
         >
-          <RefreshCw />
+          <RefreshCw className={isRetrying ? 'rotate-once' : ''} />
         </Button>
       </div>
     </div>
