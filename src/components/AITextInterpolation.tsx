@@ -28,7 +28,7 @@ export default function AITextInterpolation() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // タイピング停止後0.5秒で予測を行う
+  // タイピング停止後0.4秒で予測を行う
   useEffect(() => {
     const handler = setTimeout(() => {
       const fetchPrediction = async () => {
@@ -103,12 +103,14 @@ export default function AITextInterpolation() {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.addEventListener('input', updateDimensions);
+      textarea.addEventListener('mouseup', updateDimensions); // リサイズ後に更新
     }
 
     return () => {
       window.removeEventListener('resize', updateDimensions);
       if (textarea) {
         textarea.removeEventListener('input', updateDimensions);
+        textarea.removeEventListener('mouseup', updateDimensions); // クリーンアップ
       }
     };
   }, []);
