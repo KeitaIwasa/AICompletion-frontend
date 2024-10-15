@@ -15,3 +15,17 @@
 ## 使用方法
 以下のリンクにアクセスしてください。
 https://ai-completion2.vercel.app/
+
+## 使用技術
+
+- ### フロントエンド
+  - **React**：フロントエンドのUI構築に使用。useState, useEffect, useCallback, useRef などのフックを使用しています。
+  - **Lucide Icons**：Reactコンポーネントとして使用できるアイコンライブラリ。RefreshCw, Copy, Check, Loaderなどのアイコンを使用しています。
+  - **CSS3**：アニメーションやボタンのホバー効果をCSSで実装しています。リトライボタンの一回転アニメーションなども、CSSで管理しています。
+
+- ### バックエンド
+  - **Node.js**：APIのリクエストを処理するサーバーを構築。フロントエンドからのリクエストを受け取り、OpenAI APIと連携して補完提案を生成します。フロントエンドとの通信には REST API を使用し、JSON形式でデータの送受信を行います。
+  - **OpenAI API**：フロントエンドからの文章をバックエンド経由でOpenAI API(gpt-4o-mini, gpt-4o)に送信し、補完提案を取得します。
+
+- ### インフラ
+  - **GCP**：App Engine でNode.jsサーバーをホストしています。
